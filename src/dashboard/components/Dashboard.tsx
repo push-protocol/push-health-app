@@ -58,6 +58,44 @@ const Dashboard = () => {
       });
   };
 
+  const handleNotificationStreamService = () => {
+    setNotificationStreamStatus("loading");
+
+    const socket = new WebSocket(
+      "wss://backend.epns.io/socket.io/?address=eip155%3A1%3A0x0000000000000000000000000000000000000001&EIO=4&transport=websocket"
+    );
+
+    socket.onopen = () => {
+      console.log("WebSocket connection established.");
+      setNotificationStreamStatus("success");
+      socket.close();
+    };
+
+    socket.onerror = (error) => {
+      console.log("WebSocket error:", error);
+      setNotificationStreamStatus("error");
+    };
+  };
+
+  const handleChatMessageStreamService = () => {
+    setChatMessageStreamStatus("loading");
+
+    const socket = new WebSocket(
+      "wss://backend.epns.io/socket.io/?mode=chat&did=eip155%3A0x0000000000000000000000000000000000000001&EIO=4&transport=websocket"
+    );
+
+    socket.onopen = () => {
+      console.log("WebSocket connection established.");
+      setChatMessageStreamStatus("success");
+      socket.close();
+    };
+
+    socket.onerror = (error) => {
+      console.log("WebSocket error:", error);
+      setChatMessageStreamStatus("error");
+    };
+  };
+
   const handleGetAllRewardActivities = () => {
     setActivityListStatus("loading");
     axios({
@@ -77,6 +115,8 @@ const Dashboard = () => {
   const handleRunHealthCheck = () => {
     handleGetChannels();
     handleGetNotifications();
+    handleNotificationStreamService();
+    handleChatMessageStreamService();
     handleGetAllRewardActivities();
   };
 
